@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var compression = require('compression');
+var term = require('term.js');
 
 var app = express();
 
@@ -23,7 +24,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
+app.use(compression());
+app.use(term.middleware());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('/srv/public'));
 
 app.use('/', index);
 
@@ -54,9 +58,12 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
-        error: {}
+        error: err
     });
 });
 
 
-module.exports = app;
+module.exports = {
+	app: app,
+	http: http
+};

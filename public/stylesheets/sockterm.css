@@ -3,14 +3,42 @@ body {
   margin: 0 auto;
   padding: 0;
 }
-#terminal {
+#terminal,
+.terminal {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: #101010;
+}
+#terminal {
+  background: #0c0a0d;
+}
+.terminal,
+.test {
+  font-family: "Source Code Pro", Monospace;
+  font-size: 16px;
   color: #f0f0f0;
-  font: 14px "Source Code Pro", Monospace;
-  text-shadow: 0 0 2px #f0f0f0;
+  background: #0c0a0d;
+}
+.terminal-cursor {
+  color: #f0f0f0;
+  background: #0c0a0d;
+  -webkit-transition: 0.3s;
+  -khtml-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+  box-shadow: 0 0 10px #f0f0f0;
+}
+.terminal-cursor.reverse-video {
+  color: #0c0a0d;
+  background: #f0f0f0;
+  -webkit-transition: 0.3s;
+  -khtml-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
 }

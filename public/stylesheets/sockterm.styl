@@ -1,16 +1,42 @@
+fg = #f0f0f0
+bg = #0c0a0d
+
+transition(rate)
+	-webkit-transition rate
+	-khtml-transition rate
+	-moz-transition rate
+	-ms-transition rate
+	-o-transition rate
+	transition rate
+
 html, body
 	margin 0 auto
 	padding 0
 
-#terminal
+#terminal, .terminal
 	position absolute
 	top 0
 	left 0
 	right 0
 	bottom 0
-	background #101010
-	color #f0f0f0
-	font 14px "Source Code Pro", Monospace
-	text-shadow 0 0 2px #f0f0f0
 
+#terminal
+	background bg
+	//text-shadow 0 0 6px fg
 
+.terminal, .test
+	font-family "Source Code Pro", Monospace
+	font-size 16px
+	color fg
+	background bg
+
+.terminal-cursor
+	color fg
+	background bg
+	transition .3s
+	box-shadow 0 0 10px fg
+
+.terminal-cursor.reverse-video
+	color bg
+	background fg
+	transition .3s

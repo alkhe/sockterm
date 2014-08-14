@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 var debug = require('debug')('sockterm');
-var app = require('../app');
+var a = require('../app'),
+	app = a.app,
+	http = a.http;
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 80);
 
-var server = app.listen(app.get('port'), function() {
+var server = http.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
