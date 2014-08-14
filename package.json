@@ -6,9 +6,6 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "ansi-to-html": "^0.2.0",
-    "ansi_up": "^1.1.1",
-    "ansiparse": "0.0.5-1",
     "body-parser": "~1.0.0",
     "compression": "^1.0.11",
     "cookie-parser": "~1.0.1",
