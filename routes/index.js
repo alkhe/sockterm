@@ -4,14 +4,13 @@ module.exports = function(io) {
 		pty = require('pty.js');
 
 	router.get('/', function(req, res) {
-		res.render('index', {
-
-		});
+		res.render('index');
 	});
 
 	io.on('connection', function(socket) {
-		socket.on('client.metrics', function(metrics) {
-			var term = pty.spawn(process.env.SHELL || 'bash', [], {
+		var term;
+		socket.on('client.init', function(metrics) {
+			term = pty.spawn(process.env.SHELL || 'bash', [], {
 				name: 'xterm-color',
 				cols: metrics.cols,
 				rows: metrics.rows,

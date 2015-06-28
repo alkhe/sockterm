@@ -200,28 +200,25 @@ Terminal.prototype.refresh = function(start, end) {
 				if (data !== this.defAttr) {
 					if (data === -1) {
 						out += '<span class="' + (this.cursorState ? 'reverse-video ' : '') + 'terminal-cursor">';
-					} else {
+					}
+					else {
 						out += '<span style="';
 
 						bg = data & 0x1ff;
 						fg = (data >> 9) & 0x1ff;
 						flags = data >> 18;
 
-						// bold
 						if (flags & 1) {
 							if (!Terminal.brokenBold) {
 								out += 'font-weight:bold;';
 							}
-							// See: XTerm*boldColors
 							if (fg < 8) fg += 8;
 						}
 
-						// underline
 						if (flags & 2) {
 							out += 'text-decoration:underline;';
 						}
 
-						// blink
 						if (flags & 4) {
 							if (flags & 2) {
 								out = out.slice(0, -1);
@@ -231,25 +228,15 @@ Terminal.prototype.refresh = function(start, end) {
 							}
 						}
 
-						// inverse
 						if (flags & 8) {
 							bg = (data >> 9) & 0x1ff;
 							fg = data & 0x1ff;
-							// Should inverse just be before the
-							// above boldColors effect instead?
 							if ((flags & 1) && fg < 8) fg += 8;
 						}
 
-						// invisible
 						if (flags & 16) {
 							out += 'visibility:hidden;';
 						}
-
-						// out += '" class="'
-						//   + 'term-bg-color-' + bg
-						//   + ' '
-						//   + 'term-fg-color-' + fg
-						//   + '">';
 
 						if (bg !== 256) {
 							out += 'background-color:'
@@ -281,7 +268,8 @@ Terminal.prototype.refresh = function(start, end) {
 				default:
 					if (ch <= ' ') {
 						out += '&nbsp;';
-					} else {
+					}
+					else {
 						if (isWide(ch)) i++;
 						out += ch;
 					}
@@ -307,15 +295,15 @@ Terminal.prototype._cursorBlink = function() {
 	if (Terminal.focus !== this)
 		return;
 	this.cursorState ^= 1;
-	cursor = this.element.querySelector(".terminal-cursor");
-	if (cursor.classList.contains("reverse-video")) {
+	cursor = this.element.querySelector('.terminal-cursor');
+	if (cursor.classList.contains('reverse-video')) {
 		setTimeout(function() {
-			cursor.classList.remove("reverse-video");
+			cursor.classList.remove('reverse-video');
 		}, 0);
 	}
 	else {
 		setTimeout(function() {
-			cursor.classList.add("reverse-video");
+			cursor.classList.add('reverse-video');
 		}, 0);
 	}
 };
@@ -346,35 +334,41 @@ Terminal.prototype.refreshBlink = function() {
 	this._blink = setInterval(this._blinker, 300);
 };
 
-$(document).ready(function() {
+$(function() {
 	var socket = io.connect(),
 		win = $(window),
-		termel = $('#terminal'),
-		charsize = function(classes) {
-			var test = $('<span>', {
-					text: '0123456789',
-					"class": classes,
-					css: {
-						display: 'none'
-					}
-				}).appendTo(termel),
-				metric = {
-					width: test.width() / 10,
-					height: test.height()
-				};
-			test.remove();
-			return metric;
-		},
-		terminalbounds = function(classes) {
-			var metric = charsize(classes);
-			return {
-				cols: Math.floor(termel.width() / metric.width),
-				rows: Math.floor(termel.height() / metric.height)
-			};
+		termel = $('#terminal');
+
+	var charsize = function() {
+		var test = $('<span>', {
+			text: '0123456789',
+			'class': 'metric',
+			css: {
+				display: 'none'
+			}
+		}).appendTo(termel),
+		metric = {
+			width: test.width() / 10,
+			height: test.height()
 		};
+		test.remove();
+		return metric;
+	};
+
+	var termBounds = function() {
+		var metric = charsize();
+		console.log({
+			cols: Math.floor(termel.width() / metric.width),
+			rows: Math.floor(termel.height() / metric.height)
+		});
+		return {
+			cols: Math.floor(termel.width() / metric.width),
+			rows: Math.floor(termel.height() / metric.height)
+		};
+	};
 
 	socket.on('connect', function() {
-		var metric = terminalbounds('test'),
+		var metric = termBounds(),
 			term = new Terminal({
 				cols: metric.cols,
 				rows: metric.rows,
@@ -382,10 +376,12 @@ $(document).ready(function() {
 				screenKeys: true
 			});
 
-		socket.emit('client.metrics', metric);
+		term.open(termel[0]);
 
-		win.on('resize', function() {
-			var metric = terminalbounds('test');
+		socket.emit('client.init', metric);
+
+		win.resize(function() {
+			var metric = termBounds();
 			socket.emit('client.resize', metric);
 			term.resize(metric.cols, metric.rows);
 		});
@@ -397,15 +393,7 @@ $(document).ready(function() {
 			document.title = title;
 		});
 
-		term.open(termel[0]);
-
-		socket.on('terminal.out', function(data) {
-			term.write(data);
-		}).on('disconnect', function() {
-			term.destroy();
-		});
+		socket.on('terminal.out', term.write.bind(term))
+			.on('disconnect', term.destroy.bind(term));
 	});
 });
-
-
-

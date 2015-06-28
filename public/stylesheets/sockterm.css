@@ -15,8 +15,8 @@ body {
   background: #0c0a0d;
 }
 .terminal,
-.test {
-  font-family: "Source Code Pro", Monospace;
+.metric {
+  font-family: 'Source Code Pro', Monospace;
   font-size: 16px;
   color: #f0f0f0;
   background: #0c0a0d;
